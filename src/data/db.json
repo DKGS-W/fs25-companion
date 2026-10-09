@@ -1,0 +1,734 @@
+{
+    "crops": [
+        {
+            "id": "wheat",
+            "name": "小麥",
+            "sowingMonths": [
+                9,
+                10
+            ],
+            "harvestMonths": [
+                7,
+                8
+            ],
+            "priceData": {
+                "basePrice": 900,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "barley",
+            "name": "大麥",
+            "sowingMonths": [
+                9,
+                10
+            ],
+            "harvestMonths": [
+                6,
+                7
+            ],
+            "priceData": {
+                "basePrice": 850,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "oat",
+            "name": "燕麥",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                7,
+                8
+            ],
+            "priceData": {
+                "basePrice": 1100,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "canola",
+            "name": "油菜",
+            "sowingMonths": [
+                8,
+                9
+            ],
+            "harvestMonths": [
+                7,
+                8
+            ],
+            "priceData": {
+                "basePrice": 1900,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    11,
+                    12
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "sorghum",
+            "name": "高粱",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                8,
+                9
+            ],
+            "priceData": {
+                "basePrice": 1050,
+                "peakSeason": "Summer",
+                "highPriceWindow": [
+                    7,
+                    8
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "grapes",
+            "name": "葡萄",
+            "sowingMonths": [
+                3,
+                4,
+                5
+            ],
+            "harvestMonths": [
+                9,
+                10
+            ],
+            "priceData": {
+                "basePrice": 1600,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    11,
+                    12
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "olives",
+            "name": "橄欖",
+            "sowingMonths": [
+                3,
+                4,
+                5
+            ],
+            "harvestMonths": [
+                9,
+                10
+            ],
+            "priceData": {
+                "basePrice": 1800,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "sunflower",
+            "name": "向日葵",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                9,
+                10
+            ],
+            "priceData": {
+                "basePrice": 2200,
+                "peakSeason": "Spring",
+                "highPriceWindow": [
+                    3,
+                    4
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "soybeans",
+            "name": "大豆",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                10,
+                11
+            ],
+            "priceData": {
+                "basePrice": 2800,
+                "peakSeason": "Summer",
+                "highPriceWindow": [
+                    6,
+                    7
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "corn",
+            "name": "玉米",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                10,
+                11
+            ],
+            "priceData": {
+                "basePrice": 950,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "potatoes",
+            "name": "馬鈴薯",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                8,
+                9
+            ],
+            "priceData": {
+                "basePrice": 450,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.20
+            }
+        },
+        {
+            "id": "sugar_beet",
+            "name": "甜菜根",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                10,
+                11
+            ],
+            "priceData": {
+                "basePrice": 350,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.20
+            }
+        },
+        {
+            "id": "cotton",
+            "name": "棉花",
+            "sowingMonths": [
+                2,
+                3
+            ],
+            "harvestMonths": [
+                10,
+                11
+            ],
+            "priceData": {
+                "basePrice": 3500,
+                "peakSeason": "Spring",
+                "highPriceWindow": [
+                    2,
+                    3
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "sugarcane",
+            "name": "甘蔗",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                10,
+                11
+            ],
+            "priceData": {
+                "basePrice": 300,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.20
+            }
+        },
+        {
+            "id": "rice",
+            "name": "水稻 (FS25)",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                8,
+                9
+            ],
+            "priceData": {
+                "basePrice": 2500,
+                "peakSeason": "Summer",
+                "highPriceWindow": [
+                    7
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "long_grain_rice",
+            "name": "長粒水稻",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                8,
+                9
+            ],
+            "priceData": {
+                "basePrice": 2700,
+                "peakSeason": "Summer",
+                "highPriceWindow": [
+                    7
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "spinach",
+            "name": "菠菜",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                6,
+                7,
+                9,
+                10
+            ],
+            "priceData": {
+                "basePrice": 800,
+                "peakSeason": "Autumn",
+                "highPriceWindow": [
+                    10
+                ],
+                "alertThreshold": 1.15
+            }
+        },
+        {
+            "id": "peas",
+            "name": "豌豆",
+            "sowingMonths": [
+                3,
+                4
+            ],
+            "harvestMonths": [
+                7,
+                8,
+                9
+            ],
+            "priceData": {
+                "basePrice": 2600,
+                "peakSeason": "Winter",
+                "highPriceWindow": [
+                    12
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "green_beans",
+            "name": "青豆",
+            "sowingMonths": [
+                4,
+                5
+            ],
+            "harvestMonths": [
+                8,
+                9,
+                10
+            ],
+            "priceData": {
+                "basePrice": 2400,
+                "peakSeason": "Spring",
+                "highPriceWindow": [
+                    3
+                ],
+                "alertThreshold": 1.10
+            }
+        }
+    ],
+    "products": [
+        {
+            "id": "milk",
+            "name": "牛奶",
+            "category": "livestock",
+            "checkIntervalMonths": 1,
+            "priceData": {
+                "basePrice": 1500,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.05
+            }
+        },
+        {
+            "id": "wool",
+            "name": "羊毛",
+            "category": "livestock",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 2000,
+                "highPriceWindow": [
+                    4,
+                    5
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "eggs",
+            "name": "雞蛋",
+            "category": "livestock",
+            "checkIntervalMonths": 1,
+            "priceData": {
+                "basePrice": 3000,
+                "highPriceWindow": [
+                    11,
+                    12
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "honey",
+            "name": "蜂蜜",
+            "category": "livestock",
+            "checkIntervalMonths": 3,
+            "priceData": {
+                "basePrice": 4000,
+                "highPriceWindow": [
+                    3,
+                    4
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "flour",
+            "name": "麵粉",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 1600,
+                "highPriceWindow": [
+                    11,
+                    12
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "bread",
+            "name": "麵包",
+            "category": "factory",
+            "checkIntervalMonths": 1,
+            "priceData": {
+                "basePrice": 4100,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "cake",
+            "name": "蛋糕",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 9500,
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.05
+            }
+        },
+        {
+            "id": "butter",
+            "name": "奶油",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 3200,
+                "highPriceWindow": [
+                    11,
+                    12
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "cheese",
+            "name": "起司",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 4500,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "chocolate",
+            "name": "巧克力",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 5000,
+                "highPriceWindow": [
+                    2,
+                    3
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "sugar",
+            "name": "糖",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 1300,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "cereal",
+            "name": "穀物麥片",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 6200,
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "sunflower_oil",
+            "name": "葵花籽油",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 4200,
+                "highPriceWindow": [
+                    4,
+                    5
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "canola_oil",
+            "name": "菜籽油",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 3900,
+                "highPriceWindow": [
+                    2,
+                    3
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "olive_oil",
+            "name": "橄欖油",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 5500,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "grape_juice",
+            "name": "葡萄汁",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 3600,
+                "highPriceWindow": [
+                    12,
+                    1
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "raisins",
+            "name": "葡萄乾",
+            "category": "factory",
+            "checkIntervalMonths": 3,
+            "priceData": {
+                "basePrice": 4000,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "boards",
+            "name": "木板",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 2500,
+                "highPriceWindow": [
+                    1,
+                    2
+                ],
+                "alertThreshold": 1.10
+            }
+        },
+        {
+            "id": "furniture",
+            "name": "家具",
+            "category": "factory",
+            "checkIntervalMonths": 3,
+            "priceData": {
+                "basePrice": 5500,
+                "highPriceWindow": [
+                    3,
+                    4
+                ],
+                "alertThreshold": 1.05
+            }
+        },
+        {
+            "id": "clothes",
+            "name": "衣服",
+            "category": "factory",
+            "checkIntervalMonths": 3,
+            "priceData": {
+                "basePrice": 14000,
+                "highPriceWindow": [
+                    5,
+                    6
+                ],
+                "alertThreshold": 1.05
+            }
+        },
+        {
+            "id": "canned_peas",
+            "name": "豌豆罐頭",
+            "category": "factory",
+            "checkIntervalMonths": 2,
+            "priceData": {
+                "basePrice": 4500,
+                "highPriceWindow": [
+                    9,
+                    10
+                ],
+                "alertThreshold": 1.10
+            }
+        }
+    ],
+    "fields": [
+        {
+            "id": "field_3",
+            "name": "3號田",
+            "currentCropId": "cotton",
+            "state": "seeded",
+            "plantedMonth": 2,
+            "mergedGroupId": "group_345"
+        },
+        {
+            "id": "field_4",
+            "name": "4號田",
+            "currentCropId": "cotton",
+            "state": "seeded",
+            "plantedMonth": 2,
+            "mergedGroupId": "group_345"
+        },
+        {
+            "id": "field_5",
+            "name": "5號田",
+            "currentCropId": "cotton",
+            "state": "seeded",
+            "plantedMonth": 2,
+            "mergedGroupId": "group_345"
+        },
+        {
+            "id": "field_8",
+            "name": "8號田",
+            "currentCropId": "rice",
+            "state": "fertilized_1",
+            "plantedMonth": 4,
+            "mergedGroupId": null
+        }
+    ]
+}
