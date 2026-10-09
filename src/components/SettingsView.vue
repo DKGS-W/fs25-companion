@@ -56,20 +56,53 @@ const filteredAndSortedCrops = computed(() => {
 })
 
 const scrollToAndHighlight = async (id: string) => {
+  searchField.value = ''
+  searchFacility.value = ''
+  searchProduct.value = ''
+  searchCrop.value = ''
+  
   await nextTick()
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    highlightedId.value = id
-    expandedItems.value[id] = true
-    setTimeout(() => highlightedId.value = null, 2000)
-  }
+  
+  // 延遲 50ms 確保 Vue 渲染完成且卡片高度穩定後再捲動
+  setTimeout(() => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      highlightedId.value = id
+      expandedItems.value[id] = true // 自動展開該卡片
+      setTimeout(() => highlightedId.value = null, 2000) // 2秒後取消黃色高光
+    }
+  }, 50)
 }
 
-const handleAddField = async () => { if (newFieldName.value.trim()) { const id = addField(newFieldName.value.trim()); newFieldName.value = ''; searchField.value = ''; scrollToAndHighlight(id) } }
-const handleAddFacility = async () => { if (newFacilityName.value.trim()) { const id = addFacility(newFacilityName.value.trim()); newFacilityName.value = ''; searchFacility.value = ''; scrollToAndHighlight(id) } }
-const handleAddProduct = async () => { if (newProductName.value.trim()) { const id = addProduct(newProductName.value.trim(), false); newProductName.value = ''; searchProduct.value = ''; scrollToAndHighlight(id) } }
-const handleAddCrop = async () => { if (newCropName.value.trim()) { const id = addProduct(newCropName.value.trim(), true); newCropName.value = ''; searchCrop.value = ''; scrollToAndHighlight(id) } }
+const handleAddField = async () => { 
+  if (newFieldName.value.trim()) { 
+    const id = addField(newFieldName.value.trim())
+    newFieldName.value = ''
+    scrollToAndHighlight(id) 
+  } 
+}
+const handleAddFacility = async () => { 
+  if (newFacilityName.value.trim()) { 
+    const id = addFacility(newFacilityName.value.trim())
+    newFacilityName.value = ''
+    scrollToAndHighlight(id) 
+  } 
+}
+const handleAddProduct = async () => { 
+  if (newProductName.value.trim()) { 
+    const id = addProduct(newProductName.value.trim(), false)
+    newProductName.value = ''
+    scrollToAndHighlight(id) 
+  } 
+}
+const handleAddCrop = async () => { 
+  if (newCropName.value.trim()) { 
+    const id = addProduct(newCropName.value.trim(), true)
+    newCropName.value = ''
+    scrollToAndHighlight(id) 
+  } 
+}
 
 const getProductName = (id: string) => products.value?.find(p => p.id === id)?.name || id
 const getCropName = (id: string | null) => {
@@ -111,8 +144,8 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
 <template>
   <div class="space-y-6 animate-fade-in pb-12">
     <!-- 次選單導覽 -->
-    <div class="flex overflow-x-auto gap-2 pb-2 scrollbar-hide sticky top-0 bg-slate-50 z-40 py-2">
-      <button v-for="(label, key) in { fields: '🚜 農田', facilities: '🏭 設施', products: '📦 產品', crops: '🌾 作物' }" :key="key" @click="activeSubTab = key as any" :class="['whitespace-nowrap px-4 py-2.5 rounded-full font-bold transition-all active:scale-95 text-sm', activeSubTab === key ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-600 hover:bg-slate-300']">
+    <div class="grid grid-cols-4 gap-1.5 sticky top-0 z-40 py-2">
+      <button v-for="(label, key) in { fields: '🚜 農田', facilities: '🏭 設施', products: '📦 產品', crops: '🌾 作物' }" :key="key" @click="activeSubTab = key as any" :class="['w-full py-2.5 rounded-full font-bold transition-all active:scale-95 text-xs sm:text-sm text-center flex items-center justify-center', activeSubTab === key ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-600 hover:bg-slate-300']">
         {{ label }}
       </button>
     </div>
