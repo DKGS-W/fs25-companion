@@ -1,29 +1,26 @@
-<!-- src/App.vue -->
+<!-- src/App.vue 的 <script setup> -->
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useGameEngine } from './composables/useGameEngine'
-import SettingsView from './components/SettingsView.vue' // 引入設定元件
+import FieldsView from './components/FieldsView.vue'
+import SettingsView from './components/SettingsView.vue'
 
-// 宣告一個變數用來切換分頁
-const activeTab = ref<'schedule' | 'settings'>('schedule')
+const activeTab = ref<'schedule' | 'fields' | 'settings'>('schedule')
 
-// 1. 喚醒我們的遊戲引擎大腦，並把需要用到的變數與方法解構出來
 const { 
   currentMonth, 
   tasks, 
   nextMonth, 
   prevMonth, 
   setMonth, 
-  toggleTask 
+  toggleTask,
+  sowWithFertilizer,        // 引入帶肥播種快捷方法
+  markPriceWindowCleared 
 } = useGameEngine()
 
-// 2. 畫面邏輯：將任務分為「未完成」與「已完成」兩組
-// 使用 computed (計算屬性) 的好處是，只要 tasks 陣列一有變動（例如你打勾了某個任務），
-// 這兩個陣列就會自動重新分類，畫面也會跟著瞬間更新。
 const pendingTasks = computed(() => tasks.value.filter(t => !t.isCompleted))
 const completedTasks = computed(() => tasks.value.filter(t => t.isCompleted))
 
-// 新增：任務專屬圖示
 const getTaskIcon = (type: string) => {
   const icons: Record<string, string> = {
     sow: '🌱',
@@ -35,7 +32,6 @@ const getTaskIcon = (type: string) => {
   return icons[type] || '📌'
 }
 
-// 3. 視覺輔助：根據任務種類，回傳不同的 Tailwind 邊框顏色
 const getTaskColor = (type: string) => {
   const colors: Record<string, string> = {
     sow: 'border-green-500 text-green-700',
@@ -49,84 +45,121 @@ const getTaskColor = (type: string) => {
 </script>
 
 <template>
-  <!-- 最外層容器：設定淺灰背景、最小高度為整個螢幕，並在手機上保留內邊距 -->
   <div class="min-h-screen bg-slate-100 p-4 md:p-8 font-sans pb-36">
     
-    <!-- 頂部標題與快捷月份選擇 -->
-    <header class="max-w-md mx-auto mb-8">
-      <div class="flex justify-between items-center mb-6">
+    <!-- 頂部標題與月份選擇器 -->
+    <header class="max-w-md mx-auto mb-6">
+      <div class="flex justify-between items-center mb-5">
         <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">FS25 農務助手</h1>
-        <span class="px-4 py-1.5 bg-emerald-100 text-emerald-800 font-black rounded-full shadow-sm">
+        <span class="px-4 py-1.5 bg-emerald-100 text-emerald-800 font-black rounded-full shadow-sm text-sm">
           {{ currentMonth }} 月
         </span>
       </div>
       
-      <!-- 月份選擇器 (只有在看排程時才顯示) -->
-      <div v-show="activeTab === 'schedule'" class="grid grid-cols-6 gap-1 bg-slate-200/60 p-1.5 rounded-2xl mb-6">
-        <button v-for="m in 12" :key="m" @click="setMonth(m)" :class="['py-2 rounded-xl text-sm font-bold transition-all duration-300 ease-out', currentMonth === m ? 'bg-white text-emerald-600 shadow-sm scale-100 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-300/50 hover:text-slate-800 scale-95 hover:scale-100']">
+      <div v-show="activeTab !== 'settings'" class="grid grid-cols-6 gap-1 bg-slate-200/60 p-1.5 rounded-2xl mb-5">
+        <button 
+          v-for="m in 12" 
+          :key="m" 
+          @click="setMonth(m)" 
+          :class="['py-2 rounded-xl text-sm font-bold transition-all duration-300 ease-out', currentMonth === m ? 'bg-white text-emerald-600 shadow-sm scale-100 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-300/50 hover:text-slate-800 scale-95 hover:scale-100']"
+        >
           {{ m }}
         </button>
       </div>
 
-      <!-- 上下月切換與標題 (只有在看排程時才顯示) -->
-      <div v-show="activeTab === 'schedule'" class="flex justify-between items-center px-1">
-        <button @click="prevMonth" class="p-3 bg-white hover:bg-slate-50 rounded-full shadow-sm text-slate-500 transition-all hover:scale-110 active:scale-95"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+      <div v-show="activeTab === 'schedule'" class="flex justify-between items-center px-1 mb-2">
+        <button @click="prevMonth" class="p-3 bg-white hover:bg-slate-50 rounded-full shadow-sm text-slate-500 transition-all hover:scale-110 active:scale-95">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
         <span class="text-2xl font-black text-slate-700 tracking-wide">{{ currentMonth }} 月排程</span>
-        <button @click="nextMonth" class="p-3 bg-white hover:bg-slate-50 rounded-full shadow-sm text-slate-500 transition-all hover:scale-110 active:scale-95"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg></button>
+        <button @click="nextMonth" class="p-3 bg-white hover:bg-slate-50 rounded-full shadow-sm text-slate-500 transition-all hover:scale-110 active:scale-95">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </button>
       </div>
     </header>
 
-    <!-- 任務清單區塊 -->
+    <!-- 主內容區塊 -->
     <main class="max-w-md mx-auto space-y-4 mb-12">
       
+      <!-- 分頁 1：當月排程 -->
       <div v-if="activeTab === 'schedule'">
-      <!-- 如果這個月完全沒有任務的防呆提示 -->
-      <div v-if="tasks.length === 0" class="text-center text-slate-500 py-8">
-        這個月沒有任何排程，好好休息吧！
-      </div>
-
-      <!-- 區塊 A：未完成任務 -->
-      <TransitionGroup name="list" tag="div" class="space-y-3 relative">
-        <div 
-          v-for="task in pendingTasks" 
-          :key="task.id"
-          @click="toggleTask(task.id)"
-          :class="[
-            'p-4 rounded-xl shadow-sm border-l-4 cursor-pointer transition-shadow hover:shadow-md flex items-center gap-4',
-            getTaskColor(task.type)
-          ]"
-        >
-          <div class="w-6 h-6 rounded-full border-2 border-current flex-shrink-0 opacity-60"></div>
-          <span class="text-xl flex-shrink-0">{{ getTaskIcon(task.type) }}</span>
-          <span class="font-bold tracking-wide">{{ task.title }}</span>
+        <div v-if="tasks.length === 0" class="text-center text-slate-500 py-8 font-medium">
+          這個月沒有任何排程，好好休息吧！
         </div>
-      </TransitionGroup>
 
-      <!-- 分隔線：只有當已完成和未完成都有東西時才顯示 -->
-      <hr v-if="pendingTasks.length > 0 && completedTasks.length > 0" class="border-slate-300 my-4" />
+        <!-- 未完成任務列表 -->
+        <TransitionGroup name="list" tag="div" class="space-y-3 relative">
+          <div 
+            v-for="task in pendingTasks" 
+            :key="task.id"
+            @click="toggleTask(task.id)"
+            :class="[
+              'p-4 rounded-xl shadow-sm border-l-4 cursor-pointer transition-shadow hover:shadow-md flex items-center justify-between bg-white',
+              getTaskColor(task.type)
+            ]"
+          >
+            <div class="flex items-center gap-4">
+              <div class="w-6 h-6 rounded-full border-2 border-current flex-shrink-0 opacity-60"></div>
+              <span class="text-xl flex-shrink-0">{{ getTaskIcon(task.type) }}</span>
+              <span class="font-bold tracking-wide">{{ task.title }}</span>
+            </div>
 
-      <!-- 區塊 B：已完成任務 (加上刪除線與透明度，並沉到最底下) -->
-      <TransitionGroup name="list" tag="div" class="space-y-3 relative">
-        <div 
-          v-for="task in completedTasks" 
-          :key="task.id"
-          @click="toggleTask(task.id)"
-          class="bg-slate-100 p-4 rounded-xl border-l-4 border-slate-300 cursor-pointer opacity-50 flex items-center gap-4 hover:opacity-75 transition-opacity"
-        >
-          <div class="w-6 h-6 rounded-full bg-slate-400 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">
-            ✓
+            <!-- 右側功能按鈕區 -->
+            <div class="flex items-center gap-2">
+              <!-- 播種任務專屬：帶肥播種按鈕 (自動跳過第 1 次施肥) -->
+              <button 
+                v-if="task.type === 'sow'"
+                @click.stop="sowWithFertilizer(task.id)"
+                class="px-2.5 py-1.5 rounded-lg text-xs font-black bg-emerald-100 hover:bg-emerald-200 text-emerald-800 active:scale-90 transition-all whitespace-nowrap shadow-xs flex items-center gap-1"
+                title="使用附帶施肥箱的播種機作業，播種並自動完成第 1 次施肥"
+              >
+                <span>🌱+💧</span>
+                <span>帶肥播種</span>
+              </button>
+
+              <!-- 高價提醒專屬：本期已出清按鈕 -->
+              <button 
+                v-if="task.type === 'sell'"
+                @click.stop="markPriceWindowCleared(task.relatedEntityId)"
+                class="px-2.5 py-1.5 rounded-lg text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-700 active:scale-90 transition-all whitespace-nowrap shadow-xs"
+                title="出清後，同一個高價連續月份將不再重複提醒"
+              >
+                📦 本期已出清
+              </button>
+            </div>
           </div>
-          <span class="text-xl flex-shrink-0 grayscale">{{ getTaskIcon(task.type) }}</span>
-          <span class="font-bold text-slate-500 line-through">{{ task.title }}</span>
-        </div>
-      </TransitionGroup>
+        </TransitionGroup>
+
+        <!-- 分隔線 -->
+        <hr v-if="pendingTasks.length > 0 && completedTasks.length > 0" class="border-slate-300 my-4" />
+
+        <!-- 已完成任務 -->
+        <TransitionGroup name="list" tag="div" class="space-y-3 relative">
+          <div 
+            v-for="task in completedTasks" 
+            :key="task.id"
+            @click="toggleTask(task.id)"
+            class="bg-slate-100 p-4 rounded-xl border-l-4 border-slate-300 cursor-pointer opacity-50 flex items-center gap-4 hover:opacity-75 transition-opacity"
+          >
+            <div class="w-6 h-6 rounded-full bg-slate-400 text-white flex items-center justify-center flex-shrink-0 text-sm font-bold">
+              ✓
+            </div>
+            <span class="text-xl flex-shrink-0 grayscale">{{ getTaskIcon(task.type) }}</span>
+            <span class="font-bold text-slate-500 line-through">{{ task.title }}</span>
+          </div>
+        </TransitionGroup>
       </div>
-      <!-- ================= 視圖 2：設定頁面 ================= -->
+
+      <!-- 分頁 2：農田概況 -->
+      <FieldsView v-if="activeTab === 'fields'" />
+
+      <!-- 分頁 3：農場設定 -->
       <SettingsView v-if="activeTab === 'settings'" />
     </main>
-    <!-- 固定在底部的 App 導覽列 -->
+
+    <!-- 底部導覽列 -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 px-6 py-3 z-50">
-      <div class="max-w-md mx-auto flex justify-around">
+      <div class="max-w-md mx-auto grid grid-cols-3">
         <button 
           @click="activeTab = 'schedule'"
           :class="['flex flex-col items-center gap-1 transition-colors', activeTab === 'schedule' ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600']"
@@ -134,6 +167,15 @@ const getTaskColor = (type: string) => {
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           <span class="text-xs font-bold">當月排程</span>
         </button>
+
+        <button 
+          @click="activeTab = 'fields'"
+          :class="['flex flex-col items-center gap-1 transition-colors', activeTab === 'fields' ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600']"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span class="text-xs font-bold">農田概況</span>
+        </button>
+
         <button 
           @click="activeTab = 'settings'"
           :class="['flex flex-col items-center gap-1 transition-colors', activeTab === 'settings' ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600']"
@@ -147,7 +189,6 @@ const getTaskColor = (type: string) => {
 </template>
 
 <style>
-/* Vue Transition 動畫專用樣式 */
 .list-enter-active,
 .list-leave-active {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -160,7 +201,6 @@ const getTaskColor = (type: string) => {
   opacity: 0;
   transform: translateX(40px);
 }
-/* 讓清單元素移動時更平滑 */
 .list-move {
   transition: transform 0.4s ease;
 }

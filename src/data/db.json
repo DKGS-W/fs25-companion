@@ -14,7 +14,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 10,
+            "isRecurring": false
         },
         {
             "id": "barley",
@@ -30,7 +32,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 9,
+            "isRecurring": false
         },
         {
             "id": "canola",
@@ -46,7 +50,9 @@
             "highPriceMonths": [
                 11,
                 12
-            ]
+            ],
+            "growthMonths": 11,
+            "isRecurring": false
         },
         {
             "id": "oat",
@@ -62,7 +68,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "sorghum",
@@ -78,7 +86,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "corn",
@@ -94,7 +104,9 @@
             "highPriceMonths": [
                 6,
                 7
-            ]
+            ],
+            "growthMonths": 6,
+            "isRecurring": false
         },
         {
             "id": "sunflowers",
@@ -110,7 +122,9 @@
             "highPriceMonths": [
                 2,
                 3
-            ]
+            ],
+            "growthMonths": 7,
+            "isRecurring": false
         },
         {
             "id": "soybeans",
@@ -126,7 +140,9 @@
             "highPriceMonths": [
                 6,
                 7
-            ]
+            ],
+            "growthMonths": 6,
+            "isRecurring": false
         },
         {
             "id": "potatoes",
@@ -142,7 +158,9 @@
             "highPriceMonths": [
                 11,
                 12
-            ]
+            ],
+            "growthMonths": 5,
+            "isRecurring": false
         },
         {
             "id": "sugar_beet",
@@ -158,7 +176,9 @@
             "highPriceMonths": [
                 11,
                 12
-            ]
+            ],
+            "growthMonths": 7,
+            "isRecurring": false
         },
         {
             "id": "sugarcane",
@@ -175,7 +195,9 @@
                 7,
                 8,
                 9
-            ]
+            ],
+            "growthMonths": 7,
+            "isRecurring": true
         },
         {
             "id": "cotton",
@@ -191,7 +213,9 @@
             "highPriceMonths": [
                 2,
                 3
-            ]
+            ],
+            "growthMonths": 8,
+            "isRecurring": false
         },
         {
             "id": "grapes",
@@ -208,7 +232,9 @@
             "highPriceMonths": [
                 4,
                 5
-            ]
+            ],
+            "growthMonths": 6,
+            "isRecurring": true
         },
         {
             "id": "olives",
@@ -225,7 +251,9 @@
             "highPriceMonths": [
                 5,
                 6
-            ]
+            ],
+            "growthMonths": 7,
+            "isRecurring": true
         },
         {
             "id": "grass",
@@ -258,7 +286,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 2,
+            "isRecurring": true
         },
         {
             "id": "red_beet",
@@ -277,7 +307,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "carrots",
@@ -297,7 +329,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "parsnip",
@@ -316,7 +350,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "green_beans",
@@ -334,7 +370,9 @@
             ],
             "highPriceMonths": [
                 10
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "peas",
@@ -350,7 +388,9 @@
             ],
             "highPriceMonths": [
                 11
-            ]
+            ],
+            "growthMonths": 3,
+            "isRecurring": false
         },
         {
             "id": "spinach",
@@ -371,7 +411,9 @@
                 8,
                 9,
                 10
-            ]
+            ],
+            "growthMonths": 2,
+            "isRecurring": false
         },
         {
             "id": "long_grain_rice",
@@ -386,7 +428,9 @@
                 7,
                 8,
                 9
-            ]
+            ],
+            "growthMonths": 5,
+            "isRecurring": false
         },
         {
             "id": "rice",
@@ -403,7 +447,9 @@
                 7,
                 8,
                 9
-            ]
+            ],
+            "growthMonths": 4,
+            "isRecurring": false
         },
         {
             "id": "onions",
@@ -419,7 +465,9 @@
             "highPriceMonths": [
                 12,
                 1
-            ]
+            ],
+            "growthMonths": 5,
+            "isRecurring": false
         },
         {
             "id": "poplar",
@@ -448,7 +496,9 @@
             ],
             "highPriceMonths": [
                 10
-            ]
+            ],
+            "growthMonths": 11,
+            "isRecurring": true
         },
         {
             "id": "oilseed_radish",
@@ -463,21 +513,10 @@
                 9,
                 10
             ],
-            "harvestMonths": [
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12
-            ],
-            "highPriceMonths": []
+            "harvestMonths": [],
+            "highPriceMonths": [],
+            "growthMonths": 1,
+            "isRecurring": false
         }
     ],
     "products": [
@@ -1881,7 +1920,12 @@
             "id": "field_1",
             "name": "1號田",
             "currentCropId": null,
+            "rotationCropId?": null,
+            "plantedCropId?": null,
             "state": "idle",
+            "plantedMonth": null,
+            "lastFertilizedMonth": null,
+            "harvestedMonth": null,
             "mergedGroupId": null
         }
     ]

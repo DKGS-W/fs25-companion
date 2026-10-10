@@ -4,35 +4,24 @@ import { ref, computed, nextTick } from 'vue'
 import { useGameEngine } from '../composables/useGameEngine'
 
 const { 
-  fields, facilities, crops, products, watchedPriceIds,
-  addField, removeField, addFacility, removeFacility, addProduct, removeProduct, resetData, toggleWatchPrice 
+  facilities, crops, products, watchedPriceIds,
+  addFacility, removeFacility, addProduct, removeProduct, resetData, toggleWatchPrice 
 } = useGameEngine()
 
-const activeSubTab = ref<'fields' | 'facilities' | 'products' | 'crops'>('fields')
+const activeSubTab = ref<'facilities' | 'products' | 'crops'>('facilities')
 
-const newFieldName = ref('')
 const newFacilityName = ref('')
 const newProductName = ref('')
 const newCropName = ref('')
 
-const searchField = ref('')
 const searchFacility = ref('')
 const searchProduct = ref('')
 const searchCrop = ref('')
-const searchQueries = ref<Record<string, string>>({})
 
 const highlightedId = ref<string | null>(null)
 const editingFacilityId = ref<string | null>(null)
-const mergingFieldId = ref<string | null>(null)
-const openDropdowns = ref<Record<string, boolean>>({})
 const expandedItems = ref<Record<string, boolean>>({}) 
 const confirmDeleteId = ref<string | null>(null) 
-
-const filteredAndSortedFields = computed(() => {
-  let res = fields.value || []
-  if (searchField.value) res = res.filter(f => f.name.includes(searchField.value))
-  return res.slice().sort((a, b) => a.name.localeCompare(b.name, 'zh-TW', { numeric: true }))
-})
 
 const filteredAndSortedFacilities = computed(() => {
   let res = facilities.value || []
@@ -46,42 +35,41 @@ const filteredAndSortedFacilities = computed(() => {
 const filteredAndSortedProducts = computed(() => {
   let res = products.value || []
   if (searchProduct.value) res = res.filter(p => p.name.includes(searchProduct.value))
-  return res.slice().sort((a, b) => a.name.localeCompare(b.name, 'zh-TW', { numeric: true }))
+  return res.slice().sort((a, b) => {
+    const aWatched = isWatched(a.id)
+    const bWatched = isWatched(b.id)
+    if (aWatched !== bWatched) return aWatched ? -1 : 1
+    return a.name.localeCompare(b.name, 'zh-TW', { numeric: true })
+  })
 })
 
 const filteredAndSortedCrops = computed(() => {
   let res = crops.value || []
   if (searchCrop.value) res = res.filter(c => c.name.includes(searchCrop.value))
-  return res.slice().sort((a, b) => a.name.localeCompare(b.name, 'zh-TW', { numeric: true }))
+  return res.slice().sort((a, b) => {
+    const aWatched = isWatched(a.id)
+    const bWatched = isWatched(b.id)
+    if (aWatched !== bWatched) return aWatched ? -1 : 1
+    return a.name.localeCompare(b.name, 'zh-TW', { numeric: true })
+  })
 })
 
 const scrollToAndHighlight = async (id: string) => {
-  searchField.value = ''
   searchFacility.value = ''
   searchProduct.value = ''
   searchCrop.value = ''
-  
   await nextTick()
-  
-  // 延遲 50ms 確保 Vue 渲染完成且卡片高度穩定後再捲動
   setTimeout(() => {
     const el = document.getElementById(id)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' })
       highlightedId.value = id
-      expandedItems.value[id] = true // 自動展開該卡片
-      setTimeout(() => highlightedId.value = null, 2000) // 2秒後取消黃色高光
+      expandedItems.value[id] = true
+      setTimeout(() => highlightedId.value = null, 2000)
     }
   }, 50)
 }
 
-const handleAddField = async () => { 
-  if (newFieldName.value.trim()) { 
-    const id = addField(newFieldName.value.trim())
-    newFieldName.value = ''
-    scrollToAndHighlight(id) 
-  } 
-}
 const handleAddFacility = async () => { 
   if (newFacilityName.value.trim()) { 
     const id = addFacility(newFacilityName.value.trim())
@@ -105,13 +93,9 @@ const handleAddCrop = async () => {
 }
 
 const getProductName = (id: string) => products.value?.find(p => p.id === id)?.name || id
-const getCropName = (id: string | null) => {
-  if (id === null || id === undefined || id === '') return '休耕中 (無)'
-  return crops.value?.find(c => c.id === id)?.name || '休耕中 (無)'
-}
-const safeDelete = (type: 'field'|'facility'|'product'|'crop', id: string) => {
+
+const safeDelete = (type: 'facility'|'product'|'crop', id: string) => {
   if (confirmDeleteId.value === id) {
-    if (type === 'field') removeField(id)
     if (type === 'facility') removeFacility(id)
     if (type === 'product') removeProduct(id, false)
     if (type === 'crop') removeProduct(id, true)
@@ -120,14 +104,6 @@ const safeDelete = (type: 'field'|'facility'|'product'|'crop', id: string) => {
     confirmDeleteId.value = id
     setTimeout(() => { if (confirmDeleteId.value === id) confirmDeleteId.value = null }, 3000)
   }
-}
-
-const toggleMerge = (targetFieldId: string, currentFieldId: string) => {
-  const currentField = fields.value?.find(f => f.id === currentFieldId)
-  const targetField = fields.value?.find(f => f.id === targetFieldId)
-  if (!currentField || !targetField) return
-  if (!currentField.mergedGroupId) currentField.mergedGroupId = `group_${Date.now()}`
-  targetField.mergedGroupId = targetField.mergedGroupId === currentField.mergedGroupId ? null : currentField.mergedGroupId
 }
 
 const toggleMonth = (arr: number[] | undefined, m: number) => {
@@ -143,81 +119,19 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
 
 <template>
   <div class="space-y-6 animate-fade-in pb-12">
-    <!-- 次選單導覽 -->
-    <div class="grid grid-cols-4 gap-1.5 sticky top-0 z-40 py-2">
-      <button v-for="(label, key) in { fields: '🚜 農田', facilities: '🏭 設施', products: '📦 產品', crops: '🌾 作物' }" :key="key" @click="activeSubTab = key as any" :class="['w-full py-2.5 rounded-full font-bold transition-all active:scale-95 text-xs sm:text-sm text-center flex items-center justify-center', activeSubTab === key ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-600 hover:bg-slate-300']">
+    <!-- 次選單導覽 (3 欄均分排版) -->
+    <div class="grid grid-cols-3 gap-1.5 sticky top-0 z-40 py-2">
+      <button 
+        v-for="(label, key) in { facilities: '🏭 設施', products: '📦 產品', crops: '🌾 作物' }" 
+        :key="key" 
+        @click="activeSubTab = key as any" 
+        :class="['w-full py-2.5 rounded-xl font-bold transition-all active:scale-95 text-xs sm:text-sm text-center flex items-center justify-center', activeSubTab === key ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-600 hover:bg-slate-300']"
+      >
         {{ label }}
       </button>
     </div>
 
-    <!-- 1. 農田管理 -->
-    <section v-if="activeSubTab === 'fields'" class="space-y-4">
-      <div class="flex gap-2">
-        <input v-model="newFieldName" placeholder="新農田名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-emerald-500 outline-none">
-        <button @click="handleAddField" class="bg-emerald-500 text-white px-5 py-3 rounded-xl font-bold active:scale-95 transition-all shadow-sm">新增</button>
-      </div>
-      
-      <div class="relative">
-        <span class="absolute left-3 top-3.5 text-slate-400">🔍</span>
-        <input v-model="searchField" placeholder="搜尋農田名稱..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-base focus:ring-2 focus:ring-slate-300 outline-none">
-      </div>
-
-      <div v-for="field in filteredAndSortedFields" :key="field.id" :id="field.id" :class="['bg-white p-4 rounded-2xl border transition-all duration-500', highlightedId === field.id ? 'border-amber-400 shadow-lg bg-amber-50' : 'border-slate-200 shadow-sm']">
-        <div class="flex justify-between items-center mb-4">
-          <input v-model="field.name" class="font-bold text-slate-700 text-lg bg-transparent border-b border-dashed border-slate-300 focus:border-emerald-500 focus:outline-none w-2/3">
-          <button @click="safeDelete('field', field.id)" :class="['px-3 py-1.5 rounded-lg text-sm font-bold transition-colors active:scale-95', confirmDeleteId === field.id ? 'bg-red-500 text-white' : 'text-slate-400 bg-slate-100']">
-            {{ confirmDeleteId === field.id ? '確定刪除?' : '✕' }}
-          </button>
-        </div>
-
-        <div class="mb-5 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-          <div class="flex justify-between items-center cursor-pointer select-none" @click="mergingFieldId = mergingFieldId === field.id ? null : field.id">
-            <span class="text-sm font-bold text-slate-600">🔗 同步連動其他農田</span>
-            <span class="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-md font-bold" v-if="field.mergedGroupId">已開啟連動</span>
-          </div>
-          <div v-if="mergingFieldId === field.id" class="mt-4 flex flex-wrap gap-2 pt-4 border-t border-slate-200 animate-fade-in">
-            <label v-for="otherField in fields.filter(f => f.id !== field.id)" :key="otherField.id" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-lg cursor-pointer active:scale-95 transition-all">
-              <input type="checkbox" :checked="otherField.mergedGroupId === field.mergedGroupId && field.mergedGroupId !== null" @change="toggleMerge(otherField.id, field.id)" class="w-4 h-4 text-emerald-500 focus:ring-emerald-500 rounded">
-              <span class="text-sm font-bold text-slate-600">{{ otherField.name }}</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="relative">
-          <label class="block text-xs font-bold text-slate-400 mb-1.5">目前種植作物</label>
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-base font-bold text-slate-700 cursor-pointer flex justify-between items-center" @click="openDropdowns[field.id] = !openDropdowns[field.id]">
-            <span>{{ getCropName(field.currentCropId) }}</span>
-            <span class="text-slate-400 transition-transform" :class="{'rotate-180': openDropdowns[field.id]}">▼</span>
-          </div>
-          
-          <div v-if="openDropdowns[field.id]" class="absolute bottom-full mb-1 z-50 w-full bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden animate-fade-in">
-            <div class="p-2 border-b border-slate-100">
-              <input type="text" v-model="searchQueries[field.id]" placeholder="搜尋作物..." class="w-full bg-slate-100 rounded-lg px-3 py-2 text-base outline-none focus:ring-2 focus:ring-emerald-500">
-            </div>
-            <div class="max-h-56 overflow-y-auto pb-2">
-              <!-- 加入 .stop 阻止事件冒泡，並將農田狀態重置為 idle -->
-              <div 
-                class="px-4 py-3 text-base cursor-pointer text-slate-500 hover:bg-slate-50 active:bg-slate-100 flex items-center justify-between" 
-                @click.stop="field.currentCropId = null; field.state = 'idle'; openDropdowns[field.id] = false">
-                <span>休耕中 (無)</span>
-                <span v-if="!field.currentCropId" class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold">目前狀態</span>
-              </div>
-              <div 
-                v-for="crop in crops.filter(c => !searchQueries[field.id] || c.name.includes(searchQueries[field.id]))" 
-                :key="crop.id" 
-                @click.stop="field.currentCropId = crop.id; openDropdowns[field.id] = false" 
-                class="px-4 py-3 text-base cursor-pointer font-bold text-slate-700 hover:bg-emerald-50 active:bg-slate-100 border-t border-slate-50 flex items-center justify-between"
-              >
-                <span>{{ crop.name }}</span>
-                <span v-if="field.currentCropId === crop.id" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">選取中</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. 設施管理 -->
+    <!-- 1. 設施管理 -->
     <section v-if="activeSubTab === 'facilities'" class="space-y-4">
       <div class="flex gap-2">
         <input v-model="newFacilityName" placeholder="新工廠名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-blue-500 outline-none">
@@ -243,7 +157,6 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
           </div>
         </div>
 
-        <!-- 巡視間隔設定 -->
         <div class="flex items-center gap-2 mb-3 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
           <span class="text-xs font-bold text-slate-500">巡視頻率：</span>
           <select v-model.number="facility.checkIntervalMonths" class="bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm font-bold text-slate-700 outline-none">
@@ -284,7 +197,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
       </div>
     </section>
 
-    <!-- 3. 產品管理 -->
+    <!-- 2. 產品管理 -->
     <section v-if="activeSubTab === 'products'" class="space-y-4">
       <div class="flex gap-2">
         <input v-model="newProductName" placeholder="新產品名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-amber-500 outline-none">
@@ -325,7 +238,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
       </div>
     </section>
 
-    <!-- 4. 作物管理 -->
+    <!-- 3. 作物管理 -->
     <section v-if="activeSubTab === 'crops'" class="space-y-4">
       <div class="flex gap-2">
         <input v-model="newCropName" placeholder="新 MOD 作物名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-purple-500 outline-none">
@@ -354,9 +267,45 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
             </div>
           </div>
           
-          <div v-if="expandedItems[crop.id]" class="px-5 pb-5 animate-fade-in border-t border-slate-100 pt-5 bg-slate-50/50">
+          <div v-if="expandedItems[crop.id]" class="px-5 pb-5 animate-fade-in border-t border-slate-100 pt-5 bg-slate-50/50 space-y-5">
+            <!-- 生長週期與宿根特性自訂區塊 -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-slate-700">⏳ 生長週期：</span>
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="12" 
+                  v-model.number="crop.growthMonths" 
+                  class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-slate-800 w-16 text-center focus:ring-2 focus:ring-purple-400 outline-none"
+                />
+                <span class="text-xs font-bold text-slate-500">個月</span>
+              </div>
+
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input 
+                  type="checkbox" 
+                  v-model="crop.isRecurring" 
+                  class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
+                />
+                <span class="text-xs sm:text-sm font-bold text-purple-900">
+                  🌿 宿根/多年生 (收割後免重新播種)
+                </span>
+              </label>
+            </div>
+
+            <!-- 價格高點月份 -->
+            <div class="pt-4 border-t border-slate-200/60">
+              <p class="text-sm font-bold text-slate-500 mb-3">💰 價格高點月份：</p>
+              <div class="grid grid-cols-6 gap-2">
+                <button v-for="m in 12" :key="'price_'+m" @click="toggleMonth(crop.highPriceMonths, m)" :class="['aspect-square rounded-full text-base font-bold transition-all active:scale-75 shadow-sm flex items-center justify-center', (crop.highPriceMonths || []).includes(m) ? 'bg-purple-500 text-white border-transparent' : 'bg-white text-slate-400 border border-slate-200']">
+                  {{ m }}
+                </button>
+              </div>
+            </div>
+
             <!-- 播種月份 -->
-            <div class="mb-5">
+            <div>
               <p class="text-sm font-bold text-slate-500 mb-3">🌱 適合播種月份：</p>
               <div class="grid grid-cols-6 gap-2">
                 <button v-for="m in 12" :key="'sow_'+m" @click="toggleMonth(crop.sowingMonths, m)" :class="['aspect-square rounded-full text-base font-bold transition-all active:scale-75 shadow-sm flex items-center justify-center', (crop.sowingMonths || []).includes(m) ? 'bg-emerald-500 text-white border-transparent' : 'bg-white text-slate-400 border border-slate-200']">
@@ -366,20 +315,10 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
             </div>
             
             <!-- 收割月份 -->
-            <div class="mb-5 pt-4 border-t border-slate-200/60">
+            <div class="pt-4 border-t border-slate-200/60">
               <p class="text-sm font-bold text-slate-500 mb-3">🌾 適合收割月份：</p>
               <div class="grid grid-cols-6 gap-2">
                 <button v-for="m in 12" :key="'harv_'+m" @click="toggleMonth(crop.harvestMonths, m)" :class="['aspect-square rounded-full text-base font-bold transition-all active:scale-75 shadow-sm flex items-center justify-center', (crop.harvestMonths || []).includes(m) ? 'bg-orange-500 text-white border-transparent' : 'bg-white text-slate-400 border border-slate-200']">
-                  {{ m }}
-                </button>
-              </div>
-            </div>
-
-            <!-- 價格高點月份 -->
-            <div class="pt-4 border-t border-slate-200/60">
-              <p class="text-sm font-bold text-slate-500 mb-3">💰 價格高點月份：</p>
-              <div class="grid grid-cols-6 gap-2">
-                <button v-for="m in 12" :key="'price_'+m" @click="toggleMonth(crop.highPriceMonths, m)" :class="['aspect-square rounded-full text-base font-bold transition-all active:scale-75 shadow-sm flex items-center justify-center', (crop.highPriceMonths || []).includes(m) ? 'bg-purple-500 text-white border-transparent' : 'bg-white text-slate-400 border border-slate-200']">
                   {{ m }}
                 </button>
               </div>
@@ -399,8 +338,6 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
 </template>
 
 <style scoped>
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
