@@ -22,9 +22,9 @@ const confirmDeleteId = ref<string | null>(null)
 const FIELD_STATES: Array<{ key: Field['state']; label: string; class: string }> = [
   { key: 'idle', label: '休耕中', class: 'bg-slate-100 text-slate-600 border border-slate-200' },
   { key: 'cover_crop_seeded', label: '綠肥生長中', class: 'bg-lime-100 text-lime-800 border border-lime-300' },
-  { key: 'idle_fertilized', label: '休耕 (已帶綠肥底肥)', class: 'bg-emerald-100 text-emerald-800 border border-emerald-300' },
-  { key: 'seeded', label: '剛播種 (待施肥 1)', class: 'bg-sky-100 text-sky-800 border border-sky-300' },
-  { key: 'fertilized_1', label: '已施肥 1 次 (生長中)', class: 'bg-blue-100 text-blue-800 border border-blue-300' },
+  { key: 'idle_fertilized', label: '休耕 (已帶底肥)', class: 'bg-emerald-100 text-emerald-800 border border-emerald-300' },
+  { key: 'seeded', label: '已播種 (待施肥)', class: 'bg-sky-100 text-sky-800 border border-sky-300' },
+  { key: 'fertilized_1', label: '已施肥 1 次', class: 'bg-blue-100 text-blue-800 border border-blue-300' },
   { key: 'fertilized_2', label: '滿肥 (等收割)', class: 'bg-indigo-100 text-indigo-800 border border-indigo-300' },
   { key: 'ready_to_harvest', label: '成熟待收割', class: 'bg-amber-100 text-amber-800 border border-amber-300' }
 ]
@@ -110,13 +110,13 @@ const getAvailableRotationOptions = (mainCropId: string | null): RotationOption[
             bestMatch = {
               type: 'single_year',
               totalMonths,
-              detailText: `約 ${totalMonths} 個月完成雙收，${hB} 月收割後無縫接回 ${bestNextSA} 月播種`
+              detailText: `約 ${totalMonths} 個月完成雙收，${hB} 月收割後可接回 ${bestNextSA} 月播種`
             }
           } else if (totalMonths <= 24) {
             bestMatch = {
               type: 'multi_year',
               totalMonths,
-              detailText: `2 年期循環 (總計 ${totalMonths} 個月)，${hB} 月收割後等待接回 ${bestNextSA} 月播種`
+              detailText: `2 年循環 (約 ${totalMonths} 個月)，${hB} 月收割後可接回 ${bestNextSA} 月播種`
             }
           }
         }
@@ -266,7 +266,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
           class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl font-bold active:scale-95 transition-all shadow-sm text-sm whitespace-nowrap flex items-center gap-1.5 flex-shrink-0"
         >
           <span>🔗</span>
-          <span>合併設定</span>
+          <span>合併農田</span>
         </button>
       </div>
 
@@ -299,7 +299,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
           <div class="flex items-center gap-2 flex-wrap">
             <span class="font-black text-slate-800 text-lg tracking-wide">{{ card.displayName }}</span>
             <span v-if="card.isMerged" class="px-2 py-0.5 rounded-md text-xs font-black bg-indigo-100 text-indigo-700">
-              合併田 ({{ card.allFields.length }}塊)
+              共合併 ({{ card.allFields.length }}塊)
             </span>
           </div>
           <button 
@@ -352,7 +352,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
           
           <!-- 1. 主耕種作物 -->
           <div class="relative">
-            <label class="block text-[11px] font-bold text-slate-400 mb-1">主耕種作物</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-1">主要作物</label>
             <div 
               @click="openCropDropdownId = openCropDropdownId === card.cardId ? null : card.cardId; openRotationDropdownId = null"
               class="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 cursor-pointer flex justify-between items-center transition-colors"
@@ -370,7 +370,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
                 <input 
                   type="text" 
                   v-model="cropSearchQueries[card.cardId]" 
-                  placeholder="搜尋主作物..." 
+                  placeholder="搜尋作物..." 
                   class="w-full bg-slate-100 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -379,7 +379,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
                   class="px-4 py-2.5 text-sm cursor-pointer text-slate-500 hover:bg-slate-50 flex items-center justify-between"
                   @click.stop="updateFieldCrop(card.primaryField.id, null); openCropDropdownId = null"
                 >
-                  <span>休耕中 (未選作物)</span>
+                  <span>休耕中 (未選擇)</span>
                   <span v-if="!card.primaryField.currentCropId" class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-bold">目前</span>
                 </div>
                 <div 
@@ -389,7 +389,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
                   class="px-4 py-2.5 text-sm cursor-pointer font-bold text-slate-700 hover:bg-emerald-50 border-t border-slate-50 flex items-center justify-between"
                 >
                   <span>{{ crop.name }}</span>
-                  <span v-if="card.primaryField.currentCropId === crop.id" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">選取中</span>
+                  <span v-if="card.primaryField.currentCropId === crop.id" class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">目前</span>
                 </div>
               </div>
             </div>
@@ -398,7 +398,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
           <!-- 2. 閉環輪作選單 -->
           <div v-if="getAvailableRotationOptions(card.primaryField.currentCropId).length > 0" class="relative animate-fade-in">
             <label class="flex items-center justify-between text-[11px] font-bold text-purple-700 mb-1">
-              <span>🔄 接續輪作作物</span>
+              <span>🔄 輪作作物</span>
               <span 
                 v-if="card.primaryField.rotationCropId && getSelectedRotationMeta(card.primaryField.currentCropId, card.primaryField.rotationCropId)" 
                 :class="['text-[10px] px-1.5 py-0.5 rounded font-bold border', getSelectedRotationMeta(card.primaryField.currentCropId, card.primaryField.rotationCropId)?.badgeClass]"
@@ -420,8 +420,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
               class="absolute bottom-full mb-1 z-50 w-full sm:w-[320px] bg-white border border-purple-200 rounded-2xl shadow-2xl overflow-hidden animate-fade-in"
             >
               <div class="p-2.5 bg-purple-50 border-b border-purple-100 flex items-center justify-between">
-                <span class="text-[11px] font-bold text-purple-800">可閉環接續的輪作作物：</span>
-                <span class="text-[10px] text-purple-600 font-semibold">雙向驗證合格</span>
+                <span class="text-[11px] font-bold text-purple-800">可選的輪作作物：</span>
               </div>
               <div class="max-h-60 overflow-y-auto divide-y divide-slate-100">
                 <div 
@@ -450,7 +449,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
                     </p>
                   </div>
                   <span v-if="card.primaryField.rotationCropId === rotOpt.crop.id" class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold flex-shrink-0 mt-0.5">
-                    選取中
+                    目前
                   </span>
                 </div>
               </div>
@@ -464,10 +463,10 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
             🌱 目前生長：{{ getCropName(card.primaryField.plantedCropId) }} ({{ card.primaryField.plantedMonth }}月播種)
           </span>
           <span v-else-if="card.primaryField.state === 'cover_crop_seeded' && card.primaryField.plantedMonth" class="text-lime-700 font-bold">
-            🌱 綠肥：{{ card.primaryField.plantedMonth }} 月播種中
+            🌱 綠肥：{{ card.primaryField.plantedMonth }} 月播種
           </span>
           <span v-else-if="card.primaryField.state === 'idle_fertilized' && card.primaryField.lastFertilizedMonth" class="text-emerald-700 font-bold">
-            🚜 綠肥：{{ card.primaryField.lastFertilizedMonth }} 月已翻耕
+            🚜 綠肥：{{ card.primaryField.lastFertilizedMonth }} 月已耕耘
           </span>
           <span v-else-if="card.primaryField.plantedMonth">
             🌱 播種於 {{ card.primaryField.plantedMonth }} 月
@@ -484,12 +483,12 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
     </div>
 
     <!-- 合併農田獨立彈窗 -->
-    <div v-if="isMergeModalOpen" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 animate-fade-in">
+    <div v-if="isMergeModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
       <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
         <div class="flex justify-between items-center border-b border-slate-100 pb-3">
           <div>
-            <h3 class="text-xl font-extrabold text-slate-800">🔗 合併農田設定</h3>
-            <p class="text-xs text-slate-500 mt-0.5">勾選連動後，排程與更換作物將自動同步</p>
+            <h3 class="text-xl font-extrabold text-slate-800">🔗 合併農田</h3>
+            <p class="text-xs text-slate-500 mt-0.5">勾選合併後，排程與更換作物將自動同步</p>
           </div>
           <button @click="isMergeModalOpen = false" class="p-2 rounded-full text-slate-400 hover:bg-slate-100 font-bold">✕</button>
         </div>
@@ -497,7 +496,7 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
         <div class="space-y-4">
           <div v-for="baseField in fields" :key="'merge_base_'+baseField.id" class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
             <div class="flex justify-between items-center mb-2">
-              <span class="font-bold text-slate-700 text-sm">以【{{ baseField.name }}】為主組隊：</span>
+              <span class="font-bold text-slate-700 text-sm">與【{{ baseField.name }}】合併：</span>
               <span v-if="baseField.mergedGroupId" class="text-[11px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">已合併</span>
             </div>
             <div class="flex flex-wrap gap-2 pt-1">

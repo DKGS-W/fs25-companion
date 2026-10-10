@@ -122,7 +122,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
     <!-- 次選單導覽 (3 欄均分排版) -->
     <div class="grid grid-cols-3 gap-1.5 sticky top-0 z-40 py-2">
       <button 
-        v-for="(label, key) in { facilities: '🏭 設施', products: '📦 產品', crops: '🌾 作物' }" 
+        v-for="(label, key) in { facilities: '🏭 工廠', products: '📦 產品', crops: '🌾 作物' }" 
         :key="key" 
         @click="activeSubTab = key as any" 
         :class="['w-full py-2.5 rounded-xl font-bold transition-all active:scale-95 text-xs sm:text-sm text-center flex items-center justify-center', activeSubTab === key ? 'bg-slate-800 text-white shadow-md' : 'bg-slate-200 text-slate-600 hover:bg-slate-300']"
@@ -140,7 +140,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
 
       <div class="relative">
         <span class="absolute left-3 top-3.5 text-slate-400">🔍</span>
-        <input v-model="searchFacility" placeholder="搜尋設施名稱..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-base focus:ring-2 focus:ring-slate-300 outline-none">
+        <input v-model="searchFacility" placeholder="搜尋工廠名稱..." class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-3 text-base focus:ring-2 focus:ring-slate-300 outline-none">
       </div>
 
       <div v-for="facility in filteredAndSortedFacilities" :key="facility.id" :id="facility.id" :class="['bg-white p-4 rounded-2xl border transition-all duration-500', highlightedId === facility.id ? 'border-amber-400 shadow-lg bg-amber-50' : 'border-slate-200 shadow-sm']">
@@ -172,7 +172,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
           <div class="flex justify-between items-center mb-3">
             <p class="text-sm font-bold text-emerald-800">✅ 啟用的產線：</p>
             <button @click="editingFacilityId = editingFacilityId === facility.id ? null : facility.id" class="text-sm bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg active:scale-95 transition-all font-bold">
-              {{ editingFacilityId === facility.id ? '完成編輯' : '✏️ 編輯總產線' }}
+              {{ editingFacilityId === facility.id ? '完成編輯' : '✏️ 編輯工廠產品' }}
             </button>
           </div>
           
@@ -185,7 +185,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
           </div>
 
           <div v-if="editingFacilityId === facility.id" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl animate-fade-in shadow-inner">
-            <p class="text-xs font-bold text-slate-500 mb-3">勾選此工廠支援的項目 (從全庫)：</p>
+            <p class="text-xs font-bold text-slate-500 mb-3">勾選此工廠支援的產品：</p>
             <div class="flex flex-wrap gap-2">
               <label v-for="product in products" :key="'supp_'+product.id" class="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-lg cursor-pointer active:scale-95 transition-all">
                 <input type="checkbox" :value="product.id" v-model="facility.supportedProductIds" class="w-4 h-4 text-blue-500 rounded focus:ring-blue-500">
@@ -227,7 +227,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
           </div>
           
           <div v-if="expandedItems[product.id]" class="px-5 pb-5 animate-fade-in border-t border-slate-100 pt-4 bg-slate-50/50">
-            <p class="text-sm font-bold text-slate-500 mb-3">💰 價格高點月份 (點選切換)：</p>
+            <p class="text-sm font-bold text-slate-500 mb-3">💰 價格高點月份：</p>
             <div class="grid grid-cols-6 gap-2">
               <button v-for="m in 12" :key="m" @click="toggleMonth(product.highPriceMonths, m)" :class="['aspect-square rounded-full text-base font-bold transition-all active:scale-75 shadow-sm flex items-center justify-center', (product.highPriceMonths || []).includes(m) ? 'bg-amber-500 text-white border-transparent' : 'bg-white text-slate-400 border border-slate-200']">
                 {{ m }}
@@ -241,7 +241,7 @@ const isWatched = (id: string) => (watchedPriceIds.value || []).includes(id)
     <!-- 3. 作物管理 -->
     <section v-if="activeSubTab === 'crops'" class="space-y-4">
       <div class="flex gap-2">
-        <input v-model="newCropName" placeholder="新 MOD 作物名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-purple-500 outline-none">
+        <input v-model="newCropName" placeholder="新作物名稱..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-purple-500 outline-none">
         <button @click="handleAddCrop" class="bg-purple-500 text-white px-5 py-3 rounded-xl font-bold active:scale-95 transition-all shadow-sm">新增</button>
       </div>
 
