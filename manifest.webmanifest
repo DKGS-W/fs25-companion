@@ -1,0 +1,17 @@
+{
+    "name": "FS25 農務助手",
+    "short_name": "FS25助手",
+    "description": "Farming Simulator 25 農事排程與作物輪作助手",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#f1f5f9",
+    "theme_color": "#10b981",
+    "icons": [
+        {
+            "src": "favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}
