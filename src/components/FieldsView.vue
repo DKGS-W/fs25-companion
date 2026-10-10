@@ -250,31 +250,40 @@ const toggleMergeField = (targetFieldId: string, baseFieldId: string) => {
 <template>
   <div class="space-y-4 animate-fade-in pb-12">
     <!-- 頂部工具列 -->
-    <div class="space-y-2">
-      <div class="flex gap-2">
-        <input 
-          v-model="newFieldName" 
-          placeholder="新農田名稱 (例: 2號田)..." 
-          class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-base focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm"
-          @keyup.enter="handleAddField"
-        />
-        <button @click="handleAddField" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold active:scale-95 transition-all shadow-sm whitespace-nowrap">
-          新增
-        </button>
-        <button @click="isMergeModalOpen = true" class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2.5 rounded-xl font-bold active:scale-95 transition-all shadow-sm text-sm whitespace-nowrap flex items-center gap-1.5">
+    <div class="space-y-2.5">
+      <!-- 第 1 列：搜尋列 + 合併設定按鈕 -->
+      <div class="flex gap-2 items-center">
+        <div class="relative flex-1">
+          <span class="absolute left-3.5 top-2.5 text-slate-400">🔍</span>
+          <input 
+            v-model="searchKeyword" 
+            placeholder="搜尋農田名稱..." 
+            class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-slate-300 outline-none shadow-sm"
+          />
+        </div>
+        <button 
+          @click="isMergeModalOpen = true" 
+          class="bg-slate-800 hover:bg-slate-900 text-white px-3.5 py-2 rounded-xl font-bold active:scale-95 transition-all shadow-sm text-sm whitespace-nowrap flex items-center gap-1.5 flex-shrink-0"
+        >
           <span>🔗</span>
           <span>合併設定</span>
         </button>
       </div>
 
-      <!-- 搜尋列 -->
-      <div class="relative">
-        <span class="absolute left-3.5 top-3 text-slate-400">🔍</span>
+      <!-- 第 2 列：新農田輸入框 + 新增按鈕 -->
+      <div class="flex gap-2">
         <input 
-          v-model="searchKeyword" 
-          placeholder="搜尋農田名稱..." 
-          class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-3 py-2 text-sm focus:ring-2 focus:ring-slate-300 outline-none shadow-sm"
+          v-model="newFieldName" 
+          placeholder="新農田名稱 (例: 2號田)..." 
+          class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none shadow-sm"
+          @keyup.enter="handleAddField"
         />
+        <button 
+          @click="handleAddField" 
+          class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl font-bold active:scale-95 transition-all shadow-sm text-sm whitespace-nowrap flex-shrink-0"
+        >
+          新增
+        </button>
       </div>
     </div>
 
